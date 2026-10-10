@@ -4,6 +4,14 @@
 
 #include <cstdarg>
 
+// Lets GCC/Clang check printf-style arguments against the format string.
+#if defined(__GNUC__) || defined(__clang__)
+    #define GAME_PRINTF_FORMAT(formatIndex, firstArgIndex) \
+        __attribute__((format(printf, formatIndex, firstArgIndex)))
+#else
+    #define GAME_PRINTF_FORMAT(formatIndex, firstArgIndex)
+#endif
+
 namespace game {
 
     class Logger final {
@@ -24,7 +32,7 @@ namespace game {
             ColorMode colorMode = ColorMode::automatic
         ) noexcept;
 
-        static void log(int logLevel, const char* text, ...) noexcept;
+        static void log(int logLevel, const char* text, ...) noexcept GAME_PRINTF_FORMAT(2, 3);
         static void setLevel(int logLevel) noexcept;
         static void setRaylibLevel(int logLevel) noexcept;
         static void setColorMode(ColorMode colorMode) noexcept;

@@ -4,6 +4,9 @@
 
 #include <raylib.h>
 
+#include <cstdlib>
+#include <climits>
+
 int main() {
     game::Engine engine;
 
@@ -15,23 +18,26 @@ int main() {
 
     if (!engine.initialize(config.window, "My Game")) {
         game::Logger::log(LOG_ERROR, "Failed to initialize the game engine.");
-        return -1;
+        return EXIT_FAILURE;
     }
 
     auto update = [&]([[maybe_unused]] float dt) {
-        // Game logic goes here.
+        
     };
 
     auto draw = [&] {
+        ClearBackground({ 0, 0, 0, 255 });
         if (config.window.showFPS) {
             engine.debugFPS();
         }
-        ClearBackground({ 0, 0, 0, 255 });
+        if (config.window.showMemory) {
+            engine.debugMemory();
+        }
     };
 
     while (engine.running()) {
         engine.frame(update, draw);
     }
 
-    return engine.shutdown();
+    return EXIT_SUCCESS;
 }

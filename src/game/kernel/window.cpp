@@ -4,19 +4,19 @@
 
 namespace game {
 
-    Window::Window(int width, int height, const char* title, bool resizeable) {
+    Window::Window(int width, int height, const char* title, bool resizable) {
         if (::IsWindowReady()) {
             throw std::runtime_error("Window is already initialized!");
         }
 
-        ::SetConfigFlags(resizeable ? FLAG_WINDOW_RESIZABLE : 0);
+        ::SetConfigFlags(resizable ? FLAG_WINDOW_RESIZABLE : 0);
         ::InitWindow(width, height, title);
 
         if (!::IsWindowReady()) {
             throw std::runtime_error("Failed to initialize window!");
         }
 
-        state_ = WindowState::Pool();
+        state_ = WindowState::Poll();
     }
 
     Window::~Window() noexcept {
@@ -32,7 +32,7 @@ namespace game {
     }
 
     void Window::update() noexcept {
-        state_ = WindowState::Pool();
+        state_ = WindowState::Poll();
     }
 
     bool Window::shouldClose() const noexcept {

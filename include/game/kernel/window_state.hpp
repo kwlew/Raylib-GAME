@@ -1,18 +1,27 @@
 #pragma once
-#include "raylib.h"
-#include <stdbool.h>
+
+#include <raylib.h>
+
+namespace game {
 
 struct WindowState {
     bool fullscreen, minimized, maximized, focused, resized;
     int width, height;
     Vector2 position, dpiScale;
 
-    static WindowState Pool() {
+    static WindowState Poll() {
         return {
-            IsWindowFullscreen(), IsWindowMinimized(), IsWindowMaximized(),
-            IsWindowFocused(), IsWindowResized(),
-            GetScreenWidth(), GetScreenHeight(),
-            GetWindowPosition(), GetWindowScaleDPI()
+            .fullscreen = IsWindowFullscreen(),
+            .minimized  = IsWindowMinimized(),
+            .maximized  = IsWindowMaximized(),
+            .focused    = IsWindowFocused(),
+            .resized    = IsWindowResized(),
+            .width      = GetScreenWidth(),
+            .height     = GetScreenHeight(),
+            .position   = GetWindowPosition(),
+            .dpiScale   = GetWindowScaleDPI(),
         };
     }
 };
+
+}

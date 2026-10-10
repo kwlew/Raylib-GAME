@@ -1,6 +1,7 @@
 #include "game/kernel/engine.hpp"
 #include "game/kernel/logger.hpp"
 #include "game/kernel/window.hpp"
+#include "game/kernel/os/memory.hpp"
 
 #include <algorithm>
 #include <exception>
@@ -13,17 +14,23 @@ namespace game {
 
         // How often, in seconds, the current frame rate is written to the log.
         constexpr float fpsReportInterval = 3.0f;
+
+        // How often, in seconds, memory usage is re-read; querying the OS every frame is wasteful.
+        constexpr float memorySampleInterval = 0.5f;
+
+        constexpr double bytesPerMebibyte = 1024.0 * 1024.0;
     }
 
-    bool Engine::initialize(int width, int height, const char* title, bool resizeable, int targetFPS) {
+    bool Engine::initialize(int width, int height, const char* title, bool resizable, int targetFPS) {
         if (window_) {
             Logger::log(LOG_WARNING, "Engine is already initialized.");
             return false;
         }
 
         try {
-            window_.emplace(width, height, title, resizeable);
+            window_.emplace(width, height, title, resizable);
             setFPS(targetFPS);
+            memoryUsage_ = getProcessMemoryUsage();
             Logger::log(
                 LOG_INFO,
                 "Engine initialized (%dx%d, %d FPS)",
@@ -39,12 +46,7 @@ namespace game {
     }
 
     bool Engine::initialize(const WindowSettings& settings, const char* title) {
-        return initialize(settings.width, settings.height, title, settings.resizeable, settings.targetFPS);
-    }
-
-    int Engine::shutdown() noexcept {
-        window_.reset();
-        return 0;
+        return initialize(settings.width, settings.height, title, settings.resizable, settings.targetFPS);
     }
 
     bool Engine::running() const noexcept {
@@ -63,7 +65,13 @@ namespace game {
         fpsReportTimer_ += frameTime;
         if (fpsReportTimer_ >= fpsReportInterval) {
             fpsReportTimer_ -= fpsReportInterval;
-            Logger::log(LOG_INFO, "FPS: %d", GetFPS());
+            Logger::log(LOG_DEBUG, "FPS: %d", GetFPS());
+        }
+
+        memorySampleTimer_ += frameTime;
+        if (memorySampleTimer_ >= memorySampleInterval) {
+            memorySampleTimer_ -= memorySampleInterval;
+            memoryUsage_ = getProcessMemoryUsage();
         }
 
         update(std::min(frameTime, maxFrameTime));
@@ -75,6 +83,11 @@ namespace game {
 
     void Engine::debugFPS() const noexcept {
         DrawFPS(10, 10);
+    }
+
+    void Engine::debugMemory() const noexcept {
+        const double mebibytes = static_cast<double>(memoryUsage_) / bytesPerMebibyte;
+        DrawText(TextFormat("RAM: %.1f MB", mebibytes), 10, 30, 20, LIME);
     }
 
     void Engine::setFPS(int fps) {

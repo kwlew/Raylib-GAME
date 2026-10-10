@@ -1,0 +1,30 @@
+---
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-type-union-access,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  -modernize-use-designated-initializers,
+  performance-*,
+  -performance-enum-size,
+  readability-*,
+  -readability-magic-numbers,
+  -readability-identifier-length,
+  -readability-function-cognitive-complexity,
+  -readability-trailing-comma,
+  -readability-uppercase-literal-suffix,
+  -readability-convert-member-functions-to-static
+
+# Only report on project headers, not raylib's.
+HeaderFilterRegex: '.*/include/game/.*'
+WarningsAsErrors: ''
+FormatStyle: none

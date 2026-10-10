@@ -30,6 +30,7 @@ add_executable(Raylib_GAME
     src/game/kernel/logger.cpp
     src/game/kernel/engine.cpp
     src/game/kernel/window.cpp
+    src/game/kernel/os/memory.cpp
 )
 
 target_compile_features(Raylib_GAME PRIVATE cxx_std_23)
@@ -41,6 +42,11 @@ set_target_properties(
 
 target_include_directories(Raylib_GAME PRIVATE include)
 target_link_libraries(Raylib_GAME PRIVATE raylib)
+
+# GetProcessMemoryInfo (os/memory.cpp) lives in psapi on Windows.
+if(WIN32)
+    target_link_libraries(Raylib_GAME PRIVATE psapi)
+endif()
 
 # add_custom_command(
 #     TARGET Raylib_GAME

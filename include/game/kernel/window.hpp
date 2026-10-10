@@ -8,7 +8,7 @@ namespace game {
 
     class Window final {
         public:
-        Window(int width, int height, const char* title, bool resizeable = false);
+        Window(int width, int height, const char* title, bool resizable = false);
         ~Window() noexcept;
 
         Window(const Window&) = delete;
@@ -16,7 +16,7 @@ namespace game {
         Window(Window&&) = delete;
         Window& operator=(Window&&) = delete;
 
-        void setIcon(Image image);
+        void setIcon(Image icon);
         void setTitle(const char *title);
 
         void update() noexcept;

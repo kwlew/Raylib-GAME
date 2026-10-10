@@ -200,7 +200,7 @@ namespace {
         const LogAppearance appearance = appearanceFor(logLevel);
         const auto timestamp = currentTime();
         const bool useColor = shouldUseColor(output);
-        const std::lock_guard lock(outputMutex);
+        const std::scoped_lock lock(outputMutex);
 
         if (useColor) {
             writeSequence(output, ansi::style::dim);
