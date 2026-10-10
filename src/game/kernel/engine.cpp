@@ -2,9 +2,18 @@
 #include "game/kernel/logger.hpp"
 #include "game/kernel/window.hpp"
 
+#include <algorithm>
 #include <exception>
 
 namespace game {
+
+    namespace {
+        // Caps dt after a stall (window drag, breakpoint) so objects don't jump across the screen.
+        constexpr float maxFrameTime = 0.1f;
+
+        // How often, in seconds, the current frame rate is written to the log.
+        constexpr float fpsReportInterval = 3.0f;
+    }
 
     bool Engine::initialize(int width, int height, const char* title, bool resizeable, int targetFPS) {
         if (window_) {
@@ -42,12 +51,22 @@ namespace game {
         return window_ && !window_->shouldClose();
     }
 
-    void Engine::drawFrame(const std::function<void()>& draw) {
+    void Engine::frame(const std::function<void(float)>& update, const std::function<void()>& draw) {
         if (!window_) {
             return;
         }
 
         window_->update();
+
+        const float frameTime = GetFrameTime();
+
+        fpsReportTimer_ += frameTime;
+        if (fpsReportTimer_ >= fpsReportInterval) {
+            fpsReportTimer_ -= fpsReportInterval;
+            Logger::log(LOG_INFO, "FPS: %d", GetFPS());
+        }
+
+        update(std::min(frameTime, maxFrameTime));
 
         BeginDrawing();
         draw();

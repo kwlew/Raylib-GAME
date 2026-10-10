@@ -18,7 +18,7 @@ namespace game {
         .window = {
             .width = 800,
             .height = 600,
-            .targetFPS = 60,
+            .targetFPS = 144,
             .showFPS = true,
             .resizeable = true
         }

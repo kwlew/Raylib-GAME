@@ -18,12 +18,19 @@ int main() {
         return -1;
     }
 
+    auto update = [&]([[maybe_unused]] float dt) {
+        // Game logic goes here.
+    };
+
+    auto draw = [&] {
+        if (config.window.showFPS) {
+            engine.debugFPS();
+        }
+        ClearBackground({ 0, 0, 0, 255 });
+    };
+
     while (engine.running()) {
-        engine.drawFrame([&] {
-            if (config.window.showFPS) {
-                engine.debugFPS();
-            }
-        });
+        engine.frame(update, draw);
     }
 
     return engine.shutdown();
