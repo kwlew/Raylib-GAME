@@ -13,7 +13,7 @@ namespace game {
         constexpr float maxFrameTime = 0.1f;
 
         // How often, in seconds, the current frame rate is written to the log.
-        constexpr float fpsReportInterval = 3.0f;
+        constexpr float fpsReportInterval = 1.5f;
 
         // How often, in seconds, memory usage is re-read; querying the OS every frame is wasteful.
         constexpr float memorySampleInterval = 0.5f;
@@ -29,6 +29,8 @@ namespace game {
 
         try {
             window_.emplace(width, height, title, resizable);
+            // Pressing ESC makes running() return false so the main loop ends and shutdown() runs.
+            SetExitKey(KEY_ESCAPE);
             setFPS(targetFPS);
             memoryUsage_ = getProcessMemoryUsage();
             Logger::log(
@@ -49,6 +51,19 @@ namespace game {
         return initialize(settings.width, settings.height, title, settings.resizable, settings.targetFPS);
     }
 
+    bool Engine::shutdown() {
+        Logger::log(LOG_INFO, "Shutting down engine...");
+        if (!window_) {
+            Logger::log(LOG_WARNING, "Engine is not initialized; nothing to shut down.");
+            return false;
+        }
+
+        // Destroying the Window closes it exactly once; ~Engine then has nothing left to close.
+        window_.reset();
+        Logger::log(LOG_INFO, "Engine shutdown.");
+        return true;
+    }
+
     bool Engine::running() const noexcept {
         return window_ && !window_->shouldClose();
     }
@@ -65,7 +80,7 @@ namespace game {
         fpsReportTimer_ += frameTime;
         if (fpsReportTimer_ >= fpsReportInterval) {
             fpsReportTimer_ -= fpsReportInterval;
-            Logger::log(LOG_DEBUG, "FPS: %d", GetFPS());
+            Logger::log(LOG_INFO, "FPS: %d", GetFPS());
         }
 
         memorySampleTimer_ += frameTime;

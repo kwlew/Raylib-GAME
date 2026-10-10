@@ -40,7 +40,20 @@ set_target_properties(
         CXX_EXTENSIONS OFF
 )
 
-target_include_directories(Raylib_GAME PRIVATE include)
+# Single source of truth for the game version: the VERSION in project() above.
+# Include it with #include "game/version.hpp".
+configure_file(
+    cmake/version.hpp.in
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/include/game/version.hpp"
+    @ONLY
+)
+
+target_include_directories(
+    Raylib_GAME
+    PRIVATE
+        include
+        "${CMAKE_CURRENT_BINARY_DIR}/generated/include"
+)
 target_link_libraries(Raylib_GAME PRIVATE raylib)
 
 # GetProcessMemoryInfo (os/memory.cpp) lives in psapi on Windows.

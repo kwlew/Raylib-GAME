@@ -13,6 +13,7 @@ namespace game {
         public:
             bool initialize(int width, int height, const char* title, bool resizable, int targetFPS);
             bool initialize(const WindowSettings& settings, const char* title);
+            bool shutdown();
             [[nodiscard]] bool running() const noexcept;
             // Runs one frame: update(dt) with the seconds since the last frame, then draw().
             void frame(const std::function<void(float)>& update, const std::function<void()>& draw);

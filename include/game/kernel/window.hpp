@@ -16,6 +16,8 @@ namespace game {
         Window(Window&&) = delete;
         Window& operator=(Window&&) = delete;
 
+        void close() noexcept;
+
         void setIcon(Image icon);
         void setTitle(const char *title);
 

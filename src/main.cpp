@@ -1,6 +1,7 @@
 #include "game/kernel/logger.hpp"
 #include "game/kernel/engine.hpp"
 #include "game/config.hpp"
+#include "game/version.hpp"
 
 #include <raylib.h>
 
@@ -14,7 +15,7 @@ int main() {
 
     auto config = game::defaultConfig;
     game::Logger::log(LOG_INFO, "Starting game with configuration: %dx%d, %d FPS", config.window.width, config.window.height, config.window.targetFPS);
-
+    game::Logger::log(LOG_INFO, "Game Version: v%s", game::version::string);
 
     if (!engine.initialize(config.window, "My Game")) {
         game::Logger::log(LOG_ERROR, "Failed to initialize the game engine.");
@@ -38,6 +39,8 @@ int main() {
     while (engine.running()) {
         engine.frame(update, draw);
     }
+
+    engine.shutdown();
 
     return EXIT_SUCCESS;
 }

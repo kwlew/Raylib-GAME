@@ -20,7 +20,14 @@ namespace game {
     }
 
     Window::~Window() noexcept {
-        CloseWindow();
+        close();
+    }
+
+    // Safe to call more than once: raylib clears IsWindowReady() after CloseWindow().
+    void Window::close() noexcept {
+        if (::IsWindowReady()) {
+            ::CloseWindow();
+        }
     }
 
     void Window::setIcon(Image icon) {
@@ -30,6 +37,7 @@ namespace game {
     void Window::setTitle(const char* title) {
         SetWindowTitle(title);
     }
+
 
     void Window::update() noexcept {
         state_ = WindowState::Poll();

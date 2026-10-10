@@ -5,6 +5,11 @@
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/include",
+        "${workspaceFolder}/build/generated/include",
         "${workspaceFolder}/build/_deps/raylib-src/src"
-    ]
+    ],
+    // CMake templates contain @VAR@ placeholders that aren't valid C++ until configured.
+    "files.associations": {
+        "*.hpp.in": "plaintext"
+    }
 }
