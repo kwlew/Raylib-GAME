@@ -25,7 +25,7 @@ struct Entity {
     return { .type = type, .position = position, .health = infoFor(type).maxHealth };
 }
 
-// Draws the entity as a sphere resting on its feet position, in its type's colour.
+// Draws the entity as a capsule standing on its feet position, in its type's colour.
 // Must be called between BeginMode3D() and EndMode3D().
 void drawEntity(const Entity& entity);
 

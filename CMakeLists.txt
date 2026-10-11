@@ -29,7 +29,8 @@ FetchContent_MakeAvailable(raylib)
 # glob on each build, so new files are picked up without editing this list.
 file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 add_executable(Raylib_GAME ${GAME_SOURCES}
-    src/game/kernel/input.cpp)
+    src/game/kernel/input.cpp
+    src/game/entities/zombie.cpp)
 
 target_compile_features(Raylib_GAME PRIVATE cxx_std_23)
 set_target_properties(

@@ -1,5 +1,6 @@
 #include "game/entities/def/entity.hpp"
 #include "game/entities/player.hpp"
+#include "game/entities/zombie.hpp"
 #include "game/kernel/camera.hpp"
 #include "game/kernel/input.hpp"
 #include "game/kernel/logger.hpp"
@@ -25,7 +26,7 @@ int main() {
 
     auto config = game::defaultConfig;
 
-    config.window.targetFPS = 300;
+    config.window.targetFPS = 240;
 
     Logger::log(LOG_INFO, "Starting game with configuration: %dx%d, %d FPS", config.window.width, config.window.height, config.window.targetFPS);
     Logger::log(LOG_INFO, "Game Version: v%s", game::version::string);
@@ -39,6 +40,9 @@ int main() {
 
     auto player = game::entities::def::makeEntity(EntityType::player, { 0.0f, 0.0f, 0.0f });
     game::kernel::FirstPersonCamera camera(player.position);
+
+    // Spawns ahead and to the right, past the test block, and walks towards the player.
+    auto zombie = game::entities::def::makeEntity(EntityType::zombie, { 6.0f, 0.0f, -12.0f });
 
     // Test block: one tile tall, 3 m ahead of the spawn point (forward is -Z).
     const std::vector<game::world::Tile> tiles {
@@ -62,6 +66,7 @@ int main() {
             .jumpHeld = input.jumpHeld,
         };
         game::entities::updatePlayer(player, controls, config.world, tiles, dt);
+        game::entities::updateZombie(zombie, player.position, config.world, tiles, dt);
         camera.follow(player.position);
     };
 
@@ -75,6 +80,7 @@ int main() {
         for (const game::world::Tile& tile : tiles) {
             game::world::drawTile(tile);
         }
+        game::entities::def::drawEntity(zombie);
         EndMode3D();
 
         // Crosshair at the centre of the screen.

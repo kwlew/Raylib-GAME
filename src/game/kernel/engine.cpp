@@ -16,7 +16,7 @@ constexpr float maxFrameTime = 0.1f;
 constexpr float fpsReportInterval = 1.5f;
 
 // How often, in seconds, memory usage is re-read; querying the OS every frame is wasteful.
-constexpr float memorySampleInterval = 0.5f;
+constexpr float memorySampleInterval = 10.0f;
 
 constexpr double bytesPerMebibyte = 1024.0 * 1024.0;
 } // namespace
