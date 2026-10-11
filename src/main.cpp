@@ -1,3 +1,5 @@
+#include "game/entities/def/entity.hpp"
+#include "game/entities/player.hpp"
 #include "game/kernel/logger.hpp"
 #include "game/kernel/engine.hpp"
 #include "game/config.hpp"
@@ -25,12 +27,20 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    auto update = [&]([[maybe_unused]] float dt) {
-        
+    using game::entities::def::EntityType;
+
+    auto player = game::entities::def::makeEntity(
+        EntityType::player,
+        { static_cast<float>(config.window.width) / 2.0f, static_cast<float>(config.window.height) / 2.0f }
+    );
+
+    auto update = [&](float dt) {
+        game::entities::updatePlayer(player, dt);
     };
 
     auto draw = [&] {
         ClearBackground({ 0, 0, 0, 255 });
+        game::entities::def::drawEntity(player);
         if (config.window.showFPS) {
             engine.debugFPS();
         }
