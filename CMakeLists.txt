@@ -28,7 +28,8 @@ FetchContent_MakeAvailable(raylib)
 # Every .cpp under src/ is part of the game. CONFIGURE_DEPENDS re-checks the
 # glob on each build, so new files are picked up without editing this list.
 file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-add_executable(Raylib_GAME ${GAME_SOURCES})
+add_executable(Raylib_GAME ${GAME_SOURCES}
+    src/game/kernel/input.cpp)
 
 target_compile_features(Raylib_GAME PRIVATE cxx_std_23)
 set_target_properties(
