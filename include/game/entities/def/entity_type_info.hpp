@@ -28,12 +28,16 @@ struct EntityTypeInfo {
     float radius;
     // Feet to top of head, in metres. The body collides as a box this tall.
     float height;
+    // Health taken per hit this type lands; 0 means it doesn't attack.
+    float attackDamage;
+    // Horizontal speed, in m/s, a hit from this type knocks the target back at.
+    float knockback;
     Color color;
 };
 
 inline constexpr std::array<EntityTypeInfo, entityTypeCount> entityTypes {{
-    { .type = EntityType::player, .name = "Player", .hostile = false, .maxHealth = 20.0f, .speed = 5.0f, .acceleration = 20.0f, .deceleration = 25.0f, .jumpHeight = 1.2f, .radius = 0.5f, .height = 1.8f, .color = BLUE },
-    { .type = EntityType::zombie, .name = "Zombie", .hostile = true,  .maxHealth = 20.0f, .speed = 3.0f, .acceleration = 12.0f, .deceleration = 15.0f, .jumpHeight = 0.0f, .radius = 0.5f, .height = 1.8f, .color = GREEN },
+    { .type = EntityType::player, .name = "Player", .hostile = false, .maxHealth = 20.0f, .speed = 5.0f, .acceleration = 20.0f, .deceleration = 25.0f, .jumpHeight = 1.2f, .radius = 0.5f, .height = 1.8f, .attackDamage = 0.0f, .knockback = 0.0f, .color = BLUE },
+    { .type = EntityType::zombie, .name = "Zombie", .hostile = true,  .maxHealth = 20.0f, .speed = 3.0f, .acceleration = 12.0f, .deceleration = 15.0f, .jumpHeight = 0.0f, .radius = 0.5f, .height = 1.8f, .attackDamage = 3.0f, .knockback = 6.0f, .color = GREEN },
 }};
 
 static_assert(

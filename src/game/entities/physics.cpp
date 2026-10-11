@@ -15,6 +15,10 @@ constexpr float airControl = 0.4f;
 // Extra gravity while falling, so jumps come down faster than they go up.
 constexpr float fallGravityMultiplier = 1.6f;
 
+// Speed, in m/s, at which two bodies are pushed apart when fully overlapping
+// (centres together). Kept below walking speed so bodies stay walk-through.
+constexpr float maxPushSpeed = 3.0f;
+
 // Overlap ignored on the axes not being moved along, so touching faces don't collide.
 constexpr float contactSlop = 1e-4f;
 
@@ -112,11 +116,42 @@ void stepPhysics(
         .max = { limit, std::numeric_limits<float>::infinity(), limit },
     };
 
-    moveAxis(entity, info, &Vector3::x, entity.velocity.x * dt, feetRange, tiles);
-    moveAxis(entity, info, &Vector3::z, entity.velocity.z * dt, feetRange, tiles);
+    moveAxis(entity, info, &Vector3::x, (entity.velocity.x * dt) + entity.push.x, feetRange, tiles);
+    moveAxis(entity, info, &Vector3::z, (entity.velocity.z * dt) + entity.push.z, feetRange, tiles);
+    entity.push = {};
     // Being blocked while falling means landing; while rising, bumping a ceiling.
     const bool falling = entity.velocity.y < 0.0f;
     entity.grounded = moveAxis(entity, info, &Vector3::y, verticalVelocity * dt, feetRange, tiles) && falling;
+}
+
+void pushApart(Entity& a, Entity& b, float dt) noexcept {
+    const EntityTypeInfo& infoA = infoFor(a.type);
+    const EntityTypeInfo& infoB = infoFor(b.type);
+
+    // Bodies only touch if their heights overlap (e.g. not when jumping over one).
+    const bool verticalOverlap = a.position.y < b.position.y + infoB.height && b.position.y < a.position.y + infoA.height;
+    if (!verticalOverlap) {
+        return;
+    }
+
+    // Horizontally the bodies are treated as circles, so the push direction
+    // turns smoothly around a body instead of snapping between box faces.
+    const Vector2 apart = { a.position.x - b.position.x, a.position.z - b.position.z };
+    const float distance = Vector2Length(apart);
+    const float reach = infoA.radius + infoB.radius;
+    if (distance >= reach) {
+        return;
+    }
+
+    // Exactly on top of each other has no direction; pick one so they still separate.
+    const Vector2 direction = distance > 0.0f ? Vector2Scale(apart, 1.0f / distance) : Vector2{ 1.0f, 0.0f };
+    const float depth = (reach - distance) / reach;
+    const float step = maxPushSpeed * depth * dt * 0.5f;
+
+    a.push.x += direction.x * step;
+    a.push.z += direction.y * step;
+    b.push.x -= direction.x * step;
+    b.push.z -= direction.y * step;
 }
 
 } // namespace game::entities::def

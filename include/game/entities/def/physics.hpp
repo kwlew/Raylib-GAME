@@ -14,7 +14,7 @@ namespace game::entities::def {
 // 2. Gravity pulls it down.
 // 3. It moves, colliding with `tiles`, the arena walls and the ground, and
 //    `grounded` is updated.
-// Set velocity.y beforehand to jump.
+// Set velocity.y beforehand to jump. Any pending `push` is applied too.
 void stepPhysics(
     Entity& entity,
     Vector3 wantedHorizontal,
@@ -22,5 +22,12 @@ void stepPhysics(
     std::span<const world::Tile> tiles,
     float dt
 ) noexcept;
+
+// Soft collision between two bodies, like Minecraft mobs: if they overlap,
+// each is nudged apart a little this step instead of being blocked. The nudge
+// is stronger the deeper the overlap but always slower than walking, so you
+// can still walk through, and standing inside another body slides you out.
+// Call before both entities' stepPhysics() for the frame.
+void pushApart(Entity& a, Entity& b, float dt) noexcept;
 
 } // namespace game::entities::def

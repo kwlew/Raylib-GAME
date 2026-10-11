@@ -8,10 +8,11 @@
 
 namespace game::entities {
 
-// Walks the zombie straight towards `target` on the ground, stopping just short of it.
+// Walks the zombie straight towards `target` on the ground, stopping just
+// short of it, and hits it whenever it's within reach.
 void updateZombie(
     def::Entity& zombie,
-    Vector3 target,
+    def::Entity& target,
     const WorldSettings& world,
     std::span<const world::Tile> tiles,
     float dt

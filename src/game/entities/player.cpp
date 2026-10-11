@@ -1,4 +1,5 @@
 #include "game/entities/player.hpp"
+#include "game/entities/def/combat.hpp"
 #include "game/entities/def/physics.hpp"
 
 #include <raymath.h>
@@ -60,6 +61,7 @@ void updatePlayer(
     assert(player.type == def::EntityType::player);
     const def::EntityTypeInfo& info = infoFor(player.type);
 
+    def::tickCombat(player, dt);
     updateJump(player, info, controls, world.gravity, dt);
     def::stepPhysics(player, wantedVelocity(info, controls), world, tiles, dt);
 }
