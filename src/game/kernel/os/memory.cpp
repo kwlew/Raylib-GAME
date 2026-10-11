@@ -12,9 +12,9 @@
     #include <unistd.h>
 #endif
 
-namespace game {
+namespace game::kernel::os {
 
-std::size_t getProcessMemoryUsage() {
+std::size_t processMemoryUsage() {
 #if defined(_WIN32)
     PROCESS_MEMORY_COUNTERS pmc{};
     if (GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc)))
@@ -43,4 +43,4 @@ std::size_t getProcessMemoryUsage() {
 #endif
 }
 
-}
+} // namespace game::kernel::os

@@ -2,6 +2,8 @@
 
 #include <cstddef>
 
-namespace game {
-    std::size_t getProcessMemoryUsage();
-}
+namespace game::kernel::os {
+
+std::size_t processMemoryUsage();
+
+} // namespace game::kernel::os

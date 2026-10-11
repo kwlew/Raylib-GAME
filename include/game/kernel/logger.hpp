@@ -12,38 +12,38 @@
     #define GAME_PRINTF_FORMAT(formatIndex, firstArgIndex)
 #endif
 
-namespace game {
+namespace game::kernel {
 
-    class Logger final {
-    public:
-        enum class ColorMode {
-            automatic,
-            always,
-            never
-        };
-
-        Logger() = delete;
-
-        // Application and Raylib levels are separate so application INFO logs can
-        // remain visible while verbose Raylib initialization logs are suppressed.
-        static void init(
-            int applicationLevel = LOG_INFO,
-            int raylibLevel = LOG_WARNING,
-            ColorMode colorMode = ColorMode::automatic
-        ) noexcept;
-
-        static void log(int logLevel, const char* text, ...) noexcept GAME_PRINTF_FORMAT(2, 3);
-        static void setLevel(int logLevel) noexcept;
-        static void setRaylibLevel(int logLevel) noexcept;
-        static void setColorMode(ColorMode colorMode) noexcept;
-        static void toggle(bool enable) noexcept;
-
-    private:
-        static void raylibCallback(
-            int logLevel,
-            const char* text,
-            std::va_list args
-        ) noexcept;
+class Logger final {
+public:
+    enum class ColorMode {
+        automatic,
+        always,
+        never
     };
 
-} // namespace game
+    Logger() = delete;
+
+    // Application and Raylib levels are separate so application INFO logs can
+    // remain visible while verbose Raylib initialization logs are suppressed.
+    static void initialize(
+        int applicationLevel = LOG_INFO,
+        int raylibLevel = LOG_WARNING,
+        ColorMode colorMode = ColorMode::automatic
+    ) noexcept;
+
+    static void log(int logLevel, const char* text, ...) noexcept GAME_PRINTF_FORMAT(2, 3);
+    static void setLevel(int logLevel) noexcept;
+    static void setRaylibLevel(int logLevel) noexcept;
+    static void setColorMode(ColorMode colorMode) noexcept;
+    static void setEnabled(bool enabled) noexcept;
+
+private:
+    static void raylibCallback(
+        int logLevel,
+        const char* text,
+        std::va_list args
+    ) noexcept;
+};
+
+} // namespace game::kernel
