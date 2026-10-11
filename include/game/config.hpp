@@ -37,8 +37,7 @@ inline constexpr GameConfig defaultConfig {
         .resizable = true
     },
     .world = {
-        .arenaHalfSize = 20.0f,
-        // Earth's standard gravity.
+        .arenaHalfSize = 150.0f,
         .gravity = 9.80665f
     }
 };

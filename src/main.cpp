@@ -59,6 +59,7 @@ int main() {
             .yaw = camera.yaw(),
             .sprint = input.sprint,
             .jumpPressed = input.jump,
+            .jumpHeld = input.jumpHeld,
         };
         game::entities::updatePlayer(player, controls, config.world, tiles, dt);
         camera.follow(player.position);

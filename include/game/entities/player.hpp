@@ -17,6 +17,7 @@ struct PlayerControls {
     bool sprint = false;
     // Jump was pressed this frame.
     bool jumpPressed = false;
+    bool jumpHeld = false;
 };
 
 // Accelerates, jumps and applies gravity to the player, keeping it on or above
