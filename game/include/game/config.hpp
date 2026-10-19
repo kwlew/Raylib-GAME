@@ -8,9 +8,9 @@ struct WindowSettings final {
     const char* title     = "My Game";
     int         width     = 800;
     int         height    = 600;
-    int         targetFPS = 144;   // 0 = uncapped
+    int         targetFPS = 5000;   // 0 = uncapped
     bool        resizable = true;
-    bool        vsync     = false;
+    bool        vsync     = true;
 };
 
 struct DebugSettings final {
@@ -18,8 +18,8 @@ struct DebugSettings final {
     bool        showMemory           = true;
     bool        logFPS               = false;
     float       memorySampleInterval = 0.5f;
-    const char* fontPath             = "assets/fonts/ShareTechMono/ShareTechMono-Regular.ttf"; // relative to the executable
-    int         fontSize             = 20;
+    const char* fontPath             = "assets/fonts/VT323/VT323-Regular.ttf"; // relative to the executable
+    int         fontSize             = 24;
 };
 
 struct LogSettings final {
