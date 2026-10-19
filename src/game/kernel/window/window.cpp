@@ -4,12 +4,15 @@
 
 namespace game::kernel::window {
 
-Window::Window(int width, int height, const char* title, bool resizable) {
+Window::Window(int width, int height, const char* title, bool resizable, bool vsync) {
     if (IsWindowReady()) {
         throw std::runtime_error("Window is already initialized!");
     }
 
-    SetConfigFlags(resizable ? FLAG_WINDOW_RESIZABLE : 0);
+    unsigned int flags = 0;
+    if (resizable) flags |= FLAG_WINDOW_RESIZABLE;
+    if (vsync) flags |= FLAG_VSYNC_HINT;
+    SetConfigFlags(flags);
     InitWindow(width, height, title);
 
     if (!IsWindowReady()) {
@@ -50,4 +53,4 @@ const WindowState& Window::state() const noexcept {
     return state_;
 }
 
-} // namespace game::kernel
+} // namespace game::kernel::window

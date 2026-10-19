@@ -1,33 +1,35 @@
 #pragma once
 
+#include <raylib.h>
+
 namespace game {
 
 struct WindowSettings final {
-    const char* name;
-    int         width;
-    int         height;
-    int         targetFPS;
-    bool        showFPS;
-    bool        showMemory;
-    bool        showVelocity;
-    bool        resizable;
+    const char* title     = "My Game";
+    int         width     = 800;
+    int         height    = 600;
+    int         targetFPS = 144;   // 0 = uncapped
+    bool        resizable = true;
+    bool        vsync     = false;
+};
+
+struct DebugSettings final {
+    bool  showFPS              = true;
+    bool  showMemory           = true;
+    bool  logFPS               = false;
+    float memorySampleInterval = 0.5f;
+};
+
+struct LogSettings final {
+    int appLevel    = LOG_INFO;
+    int raylibLevel = LOG_WARNING;
 };
 
 struct GameConfig final {
     WindowSettings window;
-};
-
-inline constexpr GameConfig defaultConfig {
-    .window = {
-        .name = "My Game",
-        .width = 800,
-        .height = 600,
-        .targetFPS = 144,
-        .showFPS = true,
-        .showMemory = true,
-        .showVelocity = true,
-        .resizable = true
-    },
+    DebugSettings  debug;
+    LogSettings    log;
+    float          maxFrameTime = 0.1f;
 };
 
 } // namespace game

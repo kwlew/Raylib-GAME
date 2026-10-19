@@ -1,49 +1,61 @@
 #include "game/kernel/engine.hpp"
 
+#include "game/kernel/os/logger.hpp"
+#include "game/kernel/os/memory.hpp"
+
+#include <algorithm>
+#include <exception>
+
 namespace game::kernel {
 
     namespace {
-        constexpr float maxFrameTime = 0.1f;
-
         constexpr float fpsReportInterval = 1.5f;
-
-        constexpr float memorySampleInterval = 0.5f;
 
         constexpr double bytesPerMebibyte = 1024.0 * 1024.0;
     }
 
     using game::kernel::os::Logger;
 
-    bool Engine::initialize(int width, int height, const char* title, bool resizable, int targetFPS) {
-        Logger::initialize(LOG_INFO, LOG_WARNING);
+    Engine::~Engine() {
+        if (window_) {
+            shutdown();
+        }
+    }
 
+    bool Engine::initialize(const GameConfig& config) {
         if (window_) {
             Logger::log(LOG_WARNING, "Engine is already initialized.");
             return false;
         }
 
+        Logger::initialize(config.log.appLevel, config.log.raylibLevel);
+        config_ = config;
+
         try {
-            window_.emplace(width, height, title, resizable);
-            // Pressing ESC makes running() return false so the main loop ends and shutdown() runs.
+            window_.emplace(
+                config.window.width,
+                config.window.height,
+                config.window.title,
+                config.window.resizable,
+                config.window.vsync
+            );
+            // Pressing ESC makes running() return false so the main loop ends and the Engine destructor shuts down.
             SetExitKey(KEY_ESCAPE);
-            setFPS(targetFPS);
+            setFPS(config.window.targetFPS);
             memoryUsage_ = os::getMemoryUsage();
             Logger::log(
                 LOG_INFO,
-                "Engine initialized (%dx%d, %d FPS)",
-                width,
-                height,
-                targetFPS
+                "Engine initialized: \"%s\" (%dx%d, %d FPS)",
+                config.window.title,
+                config.window.width,
+                config.window.height,
+                config.window.targetFPS
             );
             return true;
         } catch (const std::exception& exception) {
             Logger::log(LOG_ERROR, "Failed to initialize engine: %s", exception.what());
             return false;
         }
-    }
-
-    bool Engine::initialize(const WindowSettings& settings, const char* title) {
-        return initialize(settings.width, settings.height, title, settings.resizable, settings.targetFPS);
     }
 
     bool Engine::shutdown() {
@@ -75,19 +87,23 @@ namespace game::kernel {
         fpsReportTimer_ += frameTime;
         if (fpsReportTimer_ >= fpsReportInterval) {
             fpsReportTimer_ -= fpsReportInterval;
-            Logger::log(LOG_INFO, "FPS: %d", GetFPS());
+            if (config_.debug.logFPS) {
+                Logger::log(LOG_INFO, "FPS: %d", GetFPS());
+            }
         }
 
         memorySampleTimer_ += frameTime;
-        if (memorySampleTimer_ >= memorySampleInterval) {
-            memorySampleTimer_ -= memorySampleInterval;
+        if (memorySampleTimer_ >= config_.debug.memorySampleInterval) {
+            memorySampleTimer_ -= config_.debug.memorySampleInterval;
             memoryUsage_ = os::getMemoryUsage();
         }
 
-        update(std::min(frameTime, maxFrameTime));
+        update(std::min(frameTime, config_.maxFrameTime));
 
         BeginDrawing();
         draw();
+        if (config_.debug.showFPS) debugFPS();
+        if (config_.debug.showMemory) debugMemory();
         EndDrawing();
     }
 

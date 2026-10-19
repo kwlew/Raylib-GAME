@@ -2,7 +2,7 @@
 
 #include <raylib.h>
 
-namespace game::kernel {
+namespace game::kernel::window {
 
 struct WindowState {
     bool fullscreen, minimized, maximized, focused, resized;
@@ -24,4 +24,4 @@ struct WindowState {
     }
 };
 
-} // namespace game::kernel
+} // namespace game::kernel::window

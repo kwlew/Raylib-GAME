@@ -8,7 +8,7 @@ namespace game::kernel::window {
 
     class Window final {
         public:
-            Window(int width, int height, const char* title, bool resizable = false);
+            Window(int width, int height, const char* title, bool resizable = false, bool vsync = false);
             ~Window() noexcept;
 
             Window(const Window&) = delete;
