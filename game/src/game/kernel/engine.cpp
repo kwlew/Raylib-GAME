@@ -11,6 +11,8 @@ namespace game::kernel {
     namespace {
         constexpr float fpsReportInterval = 1.5f;
 
+        constexpr float debugTextSpacing = 1.0f;
+
         constexpr double bytesPerMebibyte = 1024.0 * 1024.0;
     }
 
@@ -41,6 +43,17 @@ namespace game::kernel {
             );
             // Pressing ESC makes running() return false so the main loop ends and the Engine destructor shuts down.
             SetExitKey(KEY_ESCAPE);
+
+            // The GL context exists now, so the debug font can be uploaded.
+            const char* path = TextFormat("%s%s", GetApplicationDirectory(), config.debug.fontPath);
+            if (FileExists(path)) {
+                debugFont_ = LoadFontEx(path, config.debug.fontSize, nullptr, 0);
+                SetTextureFilter(debugFont_.texture, TEXTURE_FILTER_BILINEAR);
+            } else {
+                Logger::log(LOG_WARNING, "Debug font not found: %s", path);
+                debugFont_ = GetFontDefault();
+            }
+
             setFPS(config.window.targetFPS);
             memoryUsage_ = os::getMemoryUsage();
             Logger::log(
@@ -66,6 +79,8 @@ namespace game::kernel {
         }
 
         // Destroying the Window closes it exactly once; ~Engine then has nothing left to close.
+        UnloadFont(debugFont_);
+        debugFont_ = {};
         window_.reset();
         Logger::log(LOG_INFO, "Engine shutdown.");
         return true;
@@ -108,12 +123,17 @@ namespace game::kernel {
     }
 
     void Engine::debugFPS() const noexcept {
-        DrawFPS(10, 10);
+        const int fps = GetFPS();
+        const Color color = fps < 15 ? RED : (fps < 30 ? ORANGE : LIME);
+        const float fontSize = static_cast<float>(config_.debug.fontSize);
+        DrawTextEx(debugFont_, TextFormat("%2i FPS", fps), {10.0f, 10.0f}, fontSize, debugTextSpacing, color);
     }
 
     void Engine::debugMemory() const noexcept {
         const double mebibytes = static_cast<double>(memoryUsage_) / bytesPerMebibyte;
-        DrawText(TextFormat("RAM: %.1f MB", mebibytes), 10, 30, 20, LIME);
+        const float fontSize = static_cast<float>(config_.debug.fontSize);
+        const Vector2 position{10.0f, 10.0f + fontSize + 4.0f};
+        DrawTextEx(debugFont_, TextFormat("RAM: %.1f MB", mebibytes), position, fontSize, debugTextSpacing, LIME);
     }
 
     void Engine::setFPS(int fps) {

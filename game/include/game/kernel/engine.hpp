@@ -30,6 +30,7 @@ namespace game::kernel {
         private:
             GameConfig config_{};
             std::optional<window::Window> window_;
+            Font debugFont_{};
             float fpsReportTimer_ = 0.0f;
             float memorySampleTimer_ = 0.0f;
             std::size_t memoryUsage_ = 0;

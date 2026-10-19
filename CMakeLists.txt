@@ -25,9 +25,9 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(raylib)
 
-# Every .cpp under src/ is part of the game. CONFIGURE_DEPENDS re-checks the
+# Every .cpp under game/src/ is part of the game. CONFIGURE_DEPENDS re-checks the
 # glob on each build, so new files are picked up without editing this list.
-file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE GAME_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/game/src/*.cpp")
 add_executable(Raylib_GAME ${GAME_SOURCES})
 
 target_compile_features(Raylib_GAME PRIVATE cxx_std_23)
@@ -48,7 +48,7 @@ configure_file(
 target_include_directories(
     Raylib_GAME
     PRIVATE
-        include
+        game/include
         "${CMAKE_CURRENT_BINARY_DIR}/generated/include"
 )
 target_link_libraries(Raylib_GAME PRIVATE raylib)
@@ -58,15 +58,16 @@ if(WIN32)
     target_link_libraries(Raylib_GAME PRIVATE psapi)
 endif()
 
-# add_custom_command(
-#     TARGET Raylib_GAME
-#     POST_BUILD
-#     COMMAND
-#         ${CMAKE_COMMAND} -E copy_directory
-#         "${CMAKE_CURRENT_SOURCE_DIR}/src/assets"
-#         "$<TARGET_FILE_DIR:Raylib_GAME>/assets"
-#     COMMENT "Copying Game assets"
-# )
+# Copy game/assets next to the executable after every build.
+add_custom_command(
+    TARGET Raylib_GAME
+    POST_BUILD
+    COMMAND
+        ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/game/assets"
+        "$<TARGET_FILE_DIR:Raylib_GAME>/assets"
+    COMMENT "Copying Game assets"
+)
 
 if(GAME_ENABLE_CLANG_TIDY)
     find_program(

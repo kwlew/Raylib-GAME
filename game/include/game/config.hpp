@@ -14,10 +14,12 @@ struct WindowSettings final {
 };
 
 struct DebugSettings final {
-    bool  showFPS              = true;
-    bool  showMemory           = true;
-    bool  logFPS               = false;
-    float memorySampleInterval = 0.5f;
+    bool        showFPS              = true;
+    bool        showMemory           = true;
+    bool        logFPS               = false;
+    float       memorySampleInterval = 0.5f;
+    const char* fontPath             = "assets/fonts/ShareTechMono/ShareTechMono-Regular.ttf"; // relative to the executable
+    int         fontSize             = 20;
 };
 
 struct LogSettings final {
