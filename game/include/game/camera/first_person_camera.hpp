@@ -19,8 +19,8 @@ struct FirstPersonCamera {
 // Puts the camera at the eyes above `feet`, looking along `yaw` with level pitch.
 [[nodiscard]] FirstPersonCamera makeFirstPersonCamera(Vector3 feet, float yaw) noexcept;
 
-// Turns `yaw` (owned by the entity) and the camera's pitch from this frame's mouse movement.
-void applyMouseLook(FirstPersonCamera& view, float& yaw) noexcept;
+// Turns `yaw` (owned by the entity) and the camera's pitch from `look`, the mouse movement in pixels.
+void applyMouseLook(FirstPersonCamera& view, float& yaw, Vector2 look) noexcept;
 
 // Moves the camera to the eyes above `feet` and points it along `yaw` and pitch.
 void updateFirstPersonCamera(FirstPersonCamera& view, Vector3 feet, float yaw) noexcept;

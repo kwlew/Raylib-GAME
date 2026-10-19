@@ -32,6 +32,7 @@ namespace game::kernel {
 
         Logger::initialize(config.log.appLevel, config.log.raylibLevel);
         config_ = config;
+        debugVisible_ = config.debug.visible;
 
         try {
             window_.emplace(
@@ -95,6 +96,10 @@ namespace game::kernel {
             return;
         }
 
+        if (IsKeyPressed(config_.debug.toggleKey)) {
+            debugVisible_ = !debugVisible_;
+        }
+
         window_->update();
 
         const float frameTime = GetFrameTime();
@@ -117,23 +122,42 @@ namespace game::kernel {
 
         BeginDrawing();
         draw();
-        if (config_.debug.showFPS) debugFPS();
-        if (config_.debug.showMemory) debugMemory();
+        if (debugVisible_) {
+            int row = 0;
+            if (config_.debug.showFPS) {
+                const int fps = GetFPS();
+                const Color color = fps < 15 ? RED : (fps < 30 ? ORANGE : LIME);
+                drawDebugLine(row++, TextFormat("%2i FPS", fps), color);
+            }
+            if (config_.debug.showMemory) {
+                const double mebibytes = static_cast<double>(memoryUsage_) / bytesPerMebibyte;
+                drawDebugLine(row++, TextFormat("RAM: %.1f MB", mebibytes), LIME);
+            }
+            for (const DebugLine& line : debugLines_) {
+                drawDebugLine(row++, line.text.c_str(), line.color);
+            }
+        }
         EndDrawing();
+
+        debugLines_.clear();
     }
 
-    void Engine::debugFPS() const noexcept {
-        const int fps = GetFPS();
-        const Color color = fps < 15 ? RED : (fps < 30 ? ORANGE : LIME);
-        const float fontSize = static_cast<float>(config_.debug.fontSize);
-        DrawTextEx(debugFont_, TextFormat("%2i FPS", fps), {10.0f, 10.0f}, fontSize, debugTextSpacing, color);
+    void Engine::debugText(std::string_view text, Color color) {
+        if (!debugVisible_) {
+            return;
+        }
+        // Copy: callers may pass a TextFormat buffer, which raylib reuses.
+        debugLines_.push_back({std::string(text), color});
     }
 
-    void Engine::debugMemory() const noexcept {
-        const double mebibytes = static_cast<double>(memoryUsage_) / bytesPerMebibyte;
+    bool Engine::debugVisible() const noexcept {
+        return debugVisible_;
+    }
+
+    void Engine::drawDebugLine(int row, const char* text, Color color) const noexcept {
         const float fontSize = static_cast<float>(config_.debug.fontSize);
-        const Vector2 position{10.0f, 10.0f + fontSize + 4.0f};
-        DrawTextEx(debugFont_, TextFormat("RAM: %.1f MB", mebibytes), position, fontSize, debugTextSpacing, LIME);
+        const Vector2 position{10.0f, 10.0f + static_cast<float>(row) * (fontSize + 4.0f)};
+        DrawTextEx(debugFont_, text, position, fontSize, debugTextSpacing, color);
     }
 
     void Engine::setFPS(int fps) {

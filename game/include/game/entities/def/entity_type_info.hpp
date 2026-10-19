@@ -17,6 +17,8 @@ struct EntityTypeInfo {
     bool hostile;
     float maxHealth;
     float speed;
+    // Speed while walk is held, in m/s.
+    float walkSpeed;
     float acceleration;
     float deceleration;
     float jumpHeight;
@@ -26,8 +28,8 @@ struct EntityTypeInfo {
 };
 
 inline constexpr std::array<EntityTypeInfo, entityTypeCount> entityTypes {{
-    { .type = EntityType::player, .name = "Player", .hostile = false, .maxHealth = 20.0f, .speed = 5.0f, .acceleration = 20.0f, .deceleration = 25.0f, .jumpHeight = 1.2f, .radius = 0.5f, .height = 1.8f, .color = BLUE },
-    { .type = EntityType::zombie, .name = "Zombie", .hostile = true,  .maxHealth = 20.0f, .speed = 3.0f, .acceleration = 12.0f, .deceleration = 15.0f, .jumpHeight = 0.0f, .radius = 0.5f, .height = 1.8f, .color = GREEN },
+    { .type = EntityType::player, .name = "Player", .hostile = false, .maxHealth = 20.0f, .speed = 5.0f, .walkSpeed = 2.6f,.acceleration = 20.0f, .deceleration = 25.0f, .jumpHeight = 1.2f, .radius = 0.5f, .height = 1.8f, .color = BLUE },
+    { .type = EntityType::zombie, .name = "Zombie", .hostile = true,  .maxHealth = 20.0f, .speed = 3.0f, .walkSpeed = 3.0f,.acceleration = 12.0f, .deceleration = 15.0f, .jumpHeight = 0.0f, .radius = 0.5f, .height = 1.8f, .color = GREEN },
 }};
 
 static_assert(

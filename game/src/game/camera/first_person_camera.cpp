@@ -37,10 +37,9 @@ FirstPersonCamera makeFirstPersonCamera(Vector3 feet, float yaw) noexcept {
     return view;
 }
 
-void applyMouseLook(FirstPersonCamera& view, float& yaw) noexcept {
-    const Vector2 delta = GetMouseDelta();
-    yaw = std::remainder(yaw - delta.x * view.sensitivity, 2.0f * std::numbers::pi_v<float>);
-    view.pitch = std::clamp(view.pitch - delta.y * view.sensitivity, -view.maxPitch, view.maxPitch);
+void applyMouseLook(FirstPersonCamera& view, float& yaw, Vector2 look) noexcept {
+    yaw = std::remainder(yaw - look.x * view.sensitivity, 2.0f * std::numbers::pi_v<float>);
+    view.pitch = std::clamp(view.pitch - look.y * view.sensitivity, -view.maxPitch, view.maxPitch);
 }
 
 void updateFirstPersonCamera(FirstPersonCamera& view, Vector3 feet, float yaw) noexcept {

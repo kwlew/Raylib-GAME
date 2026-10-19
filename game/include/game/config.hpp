@@ -8,12 +8,14 @@ struct WindowSettings final {
     const char* title     = "My Game";
     int         width     = 800;
     int         height    = 600;
-    int         targetFPS = 5000;   // 0 = uncapped
+    int         targetFPS = 300;   // 0 = uncapped
     bool        resizable = true;
-    bool        vsync     = true;
+    bool        vsync     = false;
 };
 
 struct DebugSettings final {
+    bool        visible              = true;     // overlay shown at startup
+    int         toggleKey            = KEY_F3;   // shows/hides the overlay
     bool        showFPS              = true;
     bool        showMemory           = true;
     bool        logFPS               = false;

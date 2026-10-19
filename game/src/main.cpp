@@ -1,7 +1,9 @@
 #include "game/camera/first_person_camera.hpp"
 #include "game/config.hpp"
 #include "game/entities/def/entity.hpp"
+#include "game/entities/player.hpp"
 #include "game/kernel/engine.hpp"
+#include "game/kernel/os/input.hpp"
 
 #include <raylib.h>
 
@@ -28,8 +30,14 @@ int main() {
 
     auto view = game::camera::makeFirstPersonCamera(player.position, player.yaw);
 
-    auto update = [&](float /*dt*/) {
-        game::camera::applyMouseLook(view, player.yaw);
+    auto update = [&](float dt) {
+        const auto input = game::kernel::os::pollInput();
+        game::camera::applyMouseLook(view, player.yaw, input.look);
+        game::entities::updatePlayer(player, input, dt);
+        const float speed = std::hypot(player.velocity.x, player.velocity.z);
+        engine.debugText(TextFormat("Speed: %.2f m/s", static_cast<double>(speed)));
+        engine.debugText(TextFormat("Vertical: %.2f m/s", static_cast<double>(player.velocity.y)));
+        engine.debugText(TextFormat("%s%s", player.grounded ? "Grounded" : "Airborne", input.walk ? " | Walking" : ""));
         game::camera::updateFirstPersonCamera(view, player.position, player.yaw);
     };
     auto draw = [&] {
