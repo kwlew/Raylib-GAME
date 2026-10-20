@@ -69,6 +69,23 @@ namespace game::kernel {
         return window_ && !window_->shouldClose();
     }
 
+    void Engine::frame(const std::function<void(float)>& update, const std::function<void()>& draw) {
+        if (!window_) {
+            return;
+        }
+
+        window_->update();
+
+        const float frameTime = GetFrameTime();
+
+        update(std::min(frameTime, config_.maxFrameTime));
+
+        BeginDrawing();
+        draw();
+
+        EndDrawing();
+    }
+
     void Engine::setFPS(int fps) {
         SetTargetFPS(fps);
     }

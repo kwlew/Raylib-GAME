@@ -13,7 +13,7 @@
 namespace game::kernel {
 
     class Engine {
-        
+
         public:
             Engine() = default;
             ~Engine();
@@ -26,6 +26,8 @@ namespace game::kernel {
             bool initialize(const GameConfig& config);
             bool shutdown();
             [[nodiscard]] bool isRunning() const noexcept;
+
+            void frame(const std::function<void(float)>& update, const std::function<void()>& draw);
 
             void setFPS(int fps);
 
