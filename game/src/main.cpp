@@ -10,6 +10,8 @@
 #include "game/entities/player.hpp"
 #include "game/kernel/engine.hpp"
 #include "game/kernel/os/input.hpp"
+#include "game/world/world.hpp"
+#include "game/world/world_renderer.hpp"
 
 
 int close();
@@ -28,13 +30,18 @@ int main() {
 
     DisableCursor();
 
+    // Declared after `engine` so it is destroyed first, while the GL context is alive.
+    game::world::World world;
+    world.generateFlat();
+    const game::world::WorldRenderer renderer(world);
+
     Logger::log(LOG_INFO, "Application started successfully");
 
     using game::entities::def::EntityType;
     using game::entities::def::drawEntity;
     using game::entities::def::makeEntity;
 
-    auto player = makeEntity(EntityType::player, { 0.0f, 0.0f, 0.0f });
+    auto player = makeEntity(EntityType::player, { 32.0f, 1.0f, 32.0f });
 
     auto view = game::camera::makeFirstPersonCamera(player.position, player.yaw);
 
@@ -48,8 +55,7 @@ int main() {
     auto draw = [&]() {
         ClearBackground({ 20, 20, 28, 255 });
         BeginMode3D(view.camera);
-        DrawPlane({ 0.0f, 0.0f, 0.0f }, { 50.0f, 50.0f }, { 40, 40, 52, 255 });
-        DrawGrid(50, 1.0f);
+        renderer.draw();
         EndMode3D();
 
         const float cx = static_cast<float>(GetScreenWidth()) * 0.5f;
